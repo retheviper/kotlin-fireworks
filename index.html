@@ -107,7 +107,7 @@
   let lastMouseMoveTime = 0;
   const throttleMouseMove = (e) => {
     const currentTime = Date.now();
-    if (currentTime - lastMouseMoveTime > 50) {
+    if (currentTime - lastMouseMoveTime > 100) {
       createFirework(e.clientX, e.clientY);
       lastMouseMoveTime = currentTime;
     }
@@ -122,7 +122,7 @@
 
   window.addEventListener('touchmove', (e) => {
     const currentTime = Date.now();
-    if (currentTime - lastMouseMoveTime > 50) {
+    if (currentTime - lastMouseMoveTime > 100) {
       createFirework(e.touches[0].clientX, e.touches[0].clientY);
       lastMouseMoveTime = currentTime;
     }
