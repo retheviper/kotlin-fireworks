@@ -1,12 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>Kotlin Fireworks</title>
+  <title>Kotlin 로고 불꽃놀이</title>
   <style>
     html, body { margin: 0; overflow: hidden; height: 100%; }
     canvas { background-color: #000; position: absolute; top: 0; left: 0; }
-    #bgImage { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0; transition: opacity 2s ease-out; max-width: 80%; max-height: 80%; }
+    #bgImage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      max-width: 80%;
+      max-height: 80%;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -23,8 +33,10 @@
   const kotlinLogo = new Image();
   kotlinLogo.src = './images/kotlin_logo.svg';
 
-  const bgImages = ['./images/bg1.svg', './images/bg2.svg', './images/bg3.svg', './images/bg4.svg', './images/bg5.svg'];
+  const bgImages = ['./images/bg1.svg', './images/bg2.svg', './images/bg3.svg', './images/bg4.svg', './images/bg5.svg', './images/bg6.svg', './images/bg7.svg'];
   let fireworkCount = 0;
+  let imageShowing = false;
+  const recentImages = [];
 
   const fireworks = [];
 
@@ -45,11 +57,22 @@
     fireworks.push(particles);
     fireworkCount++;
 
-    if (fireworkCount % 50 === 0) {
-      const imgSrc = bgImages[Math.floor(Math.random() * bgImages.length)];
+    if (fireworkCount % 10 === 0 && !imageShowing) {
+      imageShowing = true;
+      let imgSrc;
+      do {
+        imgSrc = bgImages[Math.floor(Math.random() * bgImages.length)];
+      } while (recentImages.includes(imgSrc));
+      
+      recentImages.push(imgSrc);
+      if (recentImages.length > 3) recentImages.shift();
+
       bgImage.src = imgSrc;
-      bgImage.style.opacity = '1';
-      setTimeout(() => { bgImage.style.opacity = '0'; }, 1000);
+      setTimeout(() => { bgImage.style.opacity = '1'; }, 50);
+      setTimeout(() => {
+        bgImage.style.opacity = '0';
+        setTimeout(() => { imageShowing = false; }, 1500);
+      }, 2000);
     }
   }
 
