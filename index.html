@@ -79,36 +79,53 @@
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    fireworks.forEach((particles, fwIndex) => {
-      particles.forEach((p, index) => {
+    for (let i = fireworks.length - 1; i >= 0; i--) {
+      const particles = fireworks[i];
+      for (let j = particles.length - 1; j >= 0; j--) {
+        const p = particles[j];
         ctx.globalAlpha = p.life / 100;
         ctx.drawImage(kotlinLogo, p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
         p.x += p.speedX;
         p.y += p.speedY;
         p.life -= 2;
 
-        if (p.life <= 0) particles.splice(index, 1);
-      });
+        if (p.life <= 0) {
+          particles.splice(j, 1);
+        }
+      }
 
-      if (particles.length === 0) fireworks.splice(fwIndex, 1);
-    });
+      if (particles.length === 0) {
+        fireworks.splice(i, 1);
+      }
+    }
 
     requestAnimationFrame(animate);
   }
 
   kotlinLogo.onload = animate;
 
+  let lastMouseMoveTime = 0;
+  const throttleMouseMove = (e) => {
+    const currentTime = Date.now();
+    if (currentTime - lastMouseMoveTime > 50) {
+      createFirework(e.clientX, e.clientY);
+      lastMouseMoveTime = currentTime;
+    }
+  };
+
   window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   });
 
-  window.addEventListener('mousemove', (e) => {
-    createFirework(e.clientX, e.clientY);
-  });
+  window.addEventListener('mousemove', throttleMouseMove);
 
   window.addEventListener('touchmove', (e) => {
-    createFirework(e.touches[0].clientX, e.touches[0].clientY);
+    const currentTime = Date.now();
+    if (currentTime - lastMouseMoveTime > 50) {
+      createFirework(e.touches[0].clientX, e.touches[0].clientY);
+      lastMouseMoveTime = currentTime;
+    }
   });
 </script>
 </body>
