@@ -106,6 +106,10 @@
   window.addEventListener('mousemove', (e) => {
     createFirework(e.clientX, e.clientY);
   });
+
+  window.addEventListener('touchmove', (e) => {
+    createFirework(e.touches[0].clientX, e.touches[0].clientY);
+  });
 </script>
 </body>
 </html>
