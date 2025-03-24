@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kotlin Fireworks</title>
+  <style>
+    html, body { margin: 0; overflow: hidden; height: 100%; }
+    canvas { background-color: #000; position: absolute; top: 0; left: 0; }
+    #bgImage { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0; transition: opacity 2s ease-out; max-width: 80%; max-height: 80%; }
+  </style>
+</head>
+<body>
+<canvas id="fireworkCanvas"></canvas>
+<img id="bgImage" src="" alt="background">
+<script>
+  const canvas = document.getElementById('fireworkCanvas');
+  const ctx = canvas.getContext('2d');
+  const bgImage = document.getElementById('bgImage');
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const kotlinLogo = new Image();
+  kotlinLogo.src = './images/kotlin_logo.svg';
+
+  const bgImages = ['./images/bg1.svg', './images/bg2.svg', './images/bg3.svg', './images/bg4.svg', './images/bg5.svg'];
+  let fireworkCount = 0;
+
+  const fireworks = [];
+
+  function createFirework(x, y) {
+    const particles = [];
+    const particleCount = 15;
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x, y,
+        size: Math.random() * 15 + 10,
+        speedX: (Math.random() - 0.5) * 8,
+        speedY: (Math.random() - 0.5) * 8,
+        life: 100
+      });
+    }
+
+    fireworks.push(particles);
+    fireworkCount++;
+
+    if (fireworkCount % 50 === 0) {
+      const imgSrc = bgImages[Math.floor(Math.random() * bgImages.length)];
+      bgImage.src = imgSrc;
+      bgImage.style.opacity = '1';
+      setTimeout(() => { bgImage.style.opacity = '0'; }, 1000);
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    fireworks.forEach((particles, fwIndex) => {
+      particles.forEach((p, index) => {
+        ctx.globalAlpha = p.life / 100;
+        ctx.drawImage(kotlinLogo, p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.life -= 2;
+
+        if (p.life <= 0) particles.splice(index, 1);
+      });
+
+      if (particles.length === 0) fireworks.splice(fwIndex, 1);
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  kotlinLogo.onload = animate;
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    createFirework(e.clientX, e.clientY);
+  });
+</script>
+</body>
+</html>
